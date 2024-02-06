@@ -1,0 +1,41 @@
+1)  select title from course c, takes t where c.course_id=t.course_id and semester='Fall' and year=2009 union (select title from course c, takes t where c.course_id=t.course_id and semester='Spring' and year=2010);
+
+2) select title from course c, takes t where c.course_id=t.course_id and semester='Fall' and year=2009 intersect (select title from course c, takes t where c.course_id=t.course_id and semester='Spring' and year=2010);
+
+3) select title from course c, takes t where c.course_id=t.course_id and semester='Fall' and year=2009 minus (select title from course c, takes t where c.course_id=t.course_id and semester='Spring' and year=2010);
+
+4) select title from course minus (select distinct c.title from course c, takes t where c.course_id=t.course_id);
+
+5) select distinct title from course c, takes t where c.course_id=t.course_id and semester='Fall' and year=2009 or title in (select title from course c, takes t where c.course_id=t.course_id and semester='Spring' and year=2010);
+
+6) select count(*) from takes t, teaches tea where t.course_id=tea.course_id and t.sec_id=tea.sec_id and t.semester=tea.semester and t.year=tea.year and tea.ID=10101;
+
+7) select distinct title from course c, takes t where c.course_id=t.course_id and semester='Fall' and year=2009 and title not in (select title from course c, takes t where c.course_id=t.course_id and semester='Spring' and year=2010);
+
+8) select s.name, i.name from student s, instructor i where i.name=s.name;
+
+9) select name, salary as inst_salary from instructor where salary>some(select salary from instructor where dept_name='Biology');
+
+10) select name, salary as inst_salary from instructor where salary>all(select salary from instructor where dept_name='Biology');
+
+11) select dept_name from instructor group by dept_name having avg(salary) = (select max(avg(salary)) from instructor i group by dept_name);
+(OR)select dept_name from instructor group by dept_name having avg(salary) >= all (select avg(salary) from instructor i group by dept_name);
+
+12) select dept_name from department where budget < (select avg(salary) from instructor);
+
+13) select c.title from course c, section s where c.course_id=s.course_id and semester='Fall' and year=2009 and exists (select * from section s where c.course_id=s.course_id and semester='Spring' and year=2010);
+
+14) select name from student s where not exists(select c.course_id from course c where dept_name='Comp. Sci.' minus (select t.course_id from takes t where t.id=s.id));
+
+15) select distinct course_id from course c where 2 > (select count(*) from section s where year=2009 and c.course_id=s.course_id);
+
+16) select id, name from student s where 2 <= (select count(*) from takes t, course c where t.id=s.id and t.course_id=c.course_id and c.dept_name='Comp. Sci.');
+
+17) select avg(salary) from instructor where dept_name in (select dept_name from instructor group by dept_name having avg(salary)>42000) group by dept_name;
+
+18) create view all_courses as (select s.course_id, s.sec_id, s.building, s.room_number from section s, course c where s.course_id=c.course_id and c.dept_name='Physics' and semester='Fall' and year=2009);
+
+19) select * from all_courses;
+
+20) create view department_total_salary as (select dept_name, sum(salary) as sum_of_salaries from instructor group by dept_name);
+

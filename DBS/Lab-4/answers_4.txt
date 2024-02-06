@@ -1,0 +1,62 @@
+1)
+select course_id, count(id) from course natural full outer join takes group by course_id;
+
+2)
+select dept_name, avg(num) from (select d.dept_name, c.course_id, count(id) as num from department d, (select * from course natural full outer join takes) c
+where c.dept_name=d.dept_name group by d.dept_name, c.course_id) group by dept_name having avg(num) > 2;
+
+3)
+ select dept_name, count(course_id) from course natural full outer join department group by dept_name;
+
+4)
+select dept_name, avg(salary) from department natural full outer join instructor group by dept_name;
+
+5)
+select course_id, sec_id, count(id) from section natural full outer join takes where semester='Spring' and year=2009 group by course_id, sec_id;
+
+6)
+select course_id, count(prereq_id) from course natural full outer join prereq group by course_id order by count(prereq_id);
+
+7)
+select * from instructor order by salary desc;
+
+8)
+ with sal(dept, total) as (select dept_name, sum(salary) from department natural full outer join instructor group by dept_name) select max(total) from sal;
+OR
+select max(sum(salary)) from department natural full outer join instructor group by dept_name;
+
+9)
+ select dept_name, avg(salary) from department natural full outer join instructor group by dept_name having avg(salary) > 42000;
+
+10)
+select course_id, sec_id, count(id) as enroll from takes t where semester='Spring' and year=2010 group by course_id, sec_id having count(id) = 2;
+
+11)
+!!! select id from teaches t, (select * from section natural full outer join course) c where t.course_id=c.course_id and t.sec_id=c.sec_id and dept_name='Comp. Sci.' and exists (select course_id, sec_id from section natural full outer join course where course_id != t.course_id and sec_id != t.sec_id);
+
+12)
+select dept_name, avg(salary) from instructor where dept_name in (select dept_name from department natural full outer join instructor group by dept_name having avg(salary) > 50000 and count(id) > 1) group by dept_name;
+
+13)
+select dept_name from department where budget = (select max(budget) from department) group by dept_name;
+
+14)
+select dept_name, sum(salary) from department natural full outer join instructor group by dept_name having sum(salary) > (select avg(sum(salary)) from department natural full outer join instructor group by dept_name);
+
+15)
+ savepoint sp;
+ update student set dept_name='Comp. Sci.' where dept_name='Elec. Eng.';
+ rollback;
+
+16)
+savepoint sp;
+update instructor set salary = case when salary > 80000 then salary*1.03 else salary*1.05 end;
+rollback;
+
+
+
+
+
+
+
+

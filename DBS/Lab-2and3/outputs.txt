@@ -1,0 +1,192 @@
+SQL> ***********************************************************************************************************************************************************************
+SP2-0734: unknown command beginning "**********..." - rest of line ignored.
+SQL> select title from course c, takes t where c.course_id=t.course_id and semester='Fall' and year=2009 union (select title from course c, takes t where c.course_id=t.course_id and semester='Spring' and year=2010);
+
+TITLE
+--------------------------------------------------
+Database System Concepts
+Image Processing
+Intro. to Computer Science
+Investment Banking
+Music Video Production
+Physical Principles
+Robotics
+World History
+
+8 rows selected.
+
+SQL> select title from course c, takes t where c.course_id=t.course_id and semester='Fall' and year=2009 intersect (select title from course c, takes t where c.course_id=t.course_id and semester='Spring' and year=2010);
+
+TITLE
+--------------------------------------------------
+Intro. to Computer Science
+
+SQL> select title from course c, takes t where c.course_id=t.course_id and semester='Fall' and year=2009 minus (select title from course c, takes t where c.course_id=t.course_id and semester='Spring' and year=2010);
+
+TITLE
+--------------------------------------------------
+Database System Concepts
+Physical Principles
+
+SQL> select title from course minus (select distinct c.title from course c, takes t where c.course_id=t.course_id);
+
+TITLE
+--------------------------------------------------
+Computational Biology
+
+SQL> select distinct title from course c, takes t where c.course_id=t.course_id and semester='Fall' and year=2009 or title in (select title from course c, takes t where c.course_id=t.course_id and semester='Spring' and year=2010);
+
+TITLE
+--------------------------------------------------
+Database System Concepts
+Music Video Production
+Physical Principles
+Investment Banking
+World History
+Image Processing
+Intro. to Computer Science
+Robotics
+
+8 rows selected.
+
+SQL> select count(*) from takes t, teaches tea where t.course_id=tea.course_id and t.sec_id=tea.sec_id and t.semester=tea.semester and t.year=tea.year and tea.ID=10101;
+
+  COUNT(*)
+----------
+        10
+
+SQL> select distinct title from course c, takes t where c.course_id=t.course_id and semester='Fall' and year=2009 and title not in (select title from course c, takes t where c.course_id=t.course_id and semester='Spring' and year=2010);
+
+TITLE
+--------------------------------------------------
+Database System Concepts
+Physical Principles
+
+SQL> select s.name, i.name from student s, instructor i where i.name=s.name;
+
+NAME                 NAME
+-------------------- --------------------
+Brandt               Brandt
+
+SQL> select name, salary as inst_salary from instructor where salary>some(select salary from instructor where dept_name='Biology');
+
+NAME                 INST_SALARY
+-------------------- -----------
+Einstein                   95000
+Brandt                     92000
+Wu                         90000
+Gold                       87000
+Kim                        80000
+Singh                      80000
+Katz                       75000
+
+7 rows selected.
+
+SQL> select name, salary as inst_salary from instructor where salary>all(select salary from instructor where dept_name='Biology');
+
+NAME                 INST_SALARY
+-------------------- -----------
+Katz                       75000
+Singh                      80000
+Kim                        80000
+Gold                       87000
+Wu                         90000
+Brandt                     92000
+Einstein                   95000
+
+7 rows selected.
+
+SQL> select dept_name from instructor group by dept_name having avg(salary) = (select max(avg(salary)) from instructor i group by dept_name);
+
+DEPT_NAME
+--------------------
+Physics
+
+SQL> select dept_name from department where budget < (select avg(salary) from instructor);
+
+DEPT_NAME
+--------------------
+History
+Physics
+
+SQL> select c.title from course c, section s where c.course_id=s.course_id and semester='Fall' and year=2009 and exists (select * from section s where c.course_id=s.course_id and semester='Spring' and year=2010);
+
+TITLE
+--------------------------------------------------
+Intro. to Computer Science
+
+SQL> select name from student s where not exists(select c.course_id from course c where dept_name='Comp. Sci.' minus (select t.course_id from takes t where t.id=s.id));
+
+NAME
+--------------------
+Shankar
+
+SQL> select distinct course_id from course c where 2 > (select count(*) from section s where year=2009 and c.course_id=s.course_id);
+
+COURSE_I
+--------
+BIO-101
+BIO-301
+BIO-399
+CS-101
+CS-315
+CS-319
+CS-347
+EE-181
+FIN-201
+HIS-351
+MU-199
+
+COURSE_I
+--------
+PHY-101
+
+12 rows selected.
+
+SQL> select id, name from student s where 2 <= (select count(*) from takes t, course c where t.id=s.id and t.course_id=c.course_id and c.dept_name='Comp. Sci.');
+
+ID    NAME
+----- --------------------
+00128 Zhang
+12345 Shankar
+45678 Levy
+54321 Williams
+76543 Brown
+98765 Bourikas
+
+6 rows selected.
+
+SQL> select avg(salary) from instructor where dept_name in (select dept_name from instructor group by dept_name having avg(salary)>42000) group by dept_name;
+
+AVG(SALARY)
+-----------
+      80000
+      91000
+ 77333.3333
+      85000
+      72000
+      61000
+
+6 rows selected.
+
+SQL> create view all_courses as (select s.course_id, s.sec_id, s.building, s.room_number from section s, course c where s.course_id=c.course_id and c.dept_name='Physics' and semester='Fall' and year=2009);
+create view all_courses as (select s.course_id, s.sec_id, s.building, s.room_number from section s, course c where s.course_id=c.course_id and c.dept_name='Physics' and semester='Fall' and year=2009)
+            *
+ERROR at line 1:
+ORA-00955: name is already used by an existing object
+
+
+SQL> select * from all_courses;
+
+COURSE_I SEC_ID   BUILDING        ROOM_NU
+-------- -------- --------------- -------
+PHY-101  1        Watson          100
+
+SQL> create view department_total_salary as (select dept_name, sum(salary) as sum_of_salaries from instructor group by dept_name);
+create view department_total_salary as (select dept_name, sum(salary) as sum_of_salaries from instructor group by dept_name)
+            *
+ERROR at line 1:
+ORA-00955: name is already used by an existing object
+
+
+SQL>

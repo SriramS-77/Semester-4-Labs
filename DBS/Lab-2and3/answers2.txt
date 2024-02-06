@@ -1,0 +1,68 @@
+create table employee(empno numeric(3), empname varchar(20) not null, gender char(1) not null, salary numeric(8,2) not null,
+		      address varchar(30) not null, dno numeric(2), primary key(empno), check(gender in ('M', 'F')));
+
+create table department(deptno numeric(2), deptname varchar(20), location varchar(30), primary key(deptno), unique(deptname));
+
+alter table employee add foreign key(dno) references department;
+
+insert into department values(12, 'CSE', 'Manipal');
+insert into department values(13, 'CCE', 'Manipal');
+insert into department values(14, 'EEE', 'Manipal');
+insert into department values(15, 'IT', 'Manipal');
+insert into employee values(100, 'Ram', 'M', 50000, 'Chennai', 12);
+insert into employee values(101, 'Sriram', 'M', 54000, 'Manipal', 13);
+insert into employee values(102, 'Lallee', 'F', 54000, 'Mangalore', 14);
+insert into employee values(103, 'Shwetha', 'F', 99000, 'Bangalore', 15);
+
+insert into employee values(102, 'Lallee', 'F', 54000, 'Mangalore', 20); // error
+
+alter table employee drop constraint SYS_C00146035;
+alter table employee add constraint f_key foreign key(dno) references department on delete cascade;
+
+alter table employee modify salary numeric(8,2) default(10000);
+insert into employee values(111, 'Max', 'M', default, 'Chennai', 12);
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+select name, dept_name from student;
+
+select name from instructor where dept_name = 'Comp. Sci.';
+
+select title from course where dept_name = 'Comp. Sci.' and credits=3;
+
+select c.course_id, c.title  from course c, takes t where t.ID=12345 and c.course_id = t.course_id;
+
+select name from instructor where salary between 40000 and 90000;
+
+
+
+select stu.name, title, sec.year from section sec, course c, student stu, takes t
+where sec.course_id=c.course_id and sec.course_id=t.course_id and sec.sec_id=t.sec_id and stu.id=t.id and sec.room_number=100;
+
+select name, c.course_id, title as c_name from student s, takes t, course c where s.id=t.id and c.course_id=t.course_id and year=2010;
+
+[select dept_name, min(salary) from instructor group by dept_name ; ---> 65000
+select name, salary from instructor where salary > 65000;  ]
+
+select name, salary as inst_salary from instructor where salary>(select min(salary) from instructor where dept_name='Comp. Sci.');
+
+select name from instructor where dept_name like '%ic%';
+
+select name, length(name) name_length from student;
+
+select dept_name, substr(dept_name,3,3) from department;
+
+select upper(name) from instructor;
+
+update student set tot_cred=0 where tot_cred is null;
+
+select salary, round(salary/3,2) as one_third from instructor;
+
+alter table student rename course_id as c_name;
+
+
+
+
+
+
+

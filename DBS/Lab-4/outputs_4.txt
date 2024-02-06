@@ -1,0 +1,185 @@
+
+SQL> select course_id, count(id) from course natural full outer join takes group by course_id;
+
+COURSE_I  COUNT(ID)
+-------- ----------
+HIS-351           1
+EE-181            1
+CS-101            7
+CS-347            2
+BIO-399           0
+CS-319            3
+FIN-201           1
+BIO-101           1
+PHY-101           1
+CS-315            2
+CS-190            2
+
+COURSE_I  COUNT(ID)
+-------- ----------
+MU-199            1
+BIO-301           1
+
+13 rows selected.
+
+SQL> select dept_name, avg(num) from (select d.dept_name, c.course_id, count(id) as num from department d, (select * from course natural full outer join takes) c
+  2  where c.dept_name=d.dept_name group by d.dept_name, c.course_id) group by dept_name having avg(num) > 2;
+
+DEPT_NAME              AVG(NUM)
+-------------------- ----------
+Comp. Sci.                  3.2
+
+SQL> select dept_name, count(course_id) from course natural full outer join department group by dept_name;
+
+DEPT_NAME            COUNT(COURSE_ID)
+-------------------- ----------------
+Elec. Eng.                          1
+Physics                             1
+Comp. Sci.                          5
+Finance                             1
+Biology                             3
+History                             1
+Music                               1
+
+7 rows selected.
+
+SQL> select dept_name, avg(salary) from department natural full outer join instructor group by dept_name;
+
+DEPT_NAME            AVG(SALARY)
+-------------------- -----------
+Elec. Eng.                 80000
+Physics                    91000
+Comp. Sci.            77333.3333
+Finance                    85000
+Biology                    72000
+Music                      40000
+History                    61000
+
+7 rows selected.
+
+SQL> select course_id, sec_id, count(id) from section natural full outer join takes where semester='Spring' and year=2009 group by course_id, sec_id;
+
+COURSE_I SEC_ID    COUNT(ID)
+-------- -------- ----------
+EE-181   1                 1
+CS-190   2                 2
+CS-190   1                 0
+
+SQL> select course_id, count(prereq_id) from course natural full outer join prereq group by course_id order by count(prereq_id);
+
+COURSE_I COUNT(PREREQ_ID)
+-------- ----------------
+MU-199                  0
+BIO-101                 0
+HIS-351                 0
+PHY-101                 0
+FIN-201                 0
+CS-101                  0
+CS-190                  1
+CS-315                  1
+BIO-301                 1
+CS-347                  1
+BIO-399                 1
+
+COURSE_I COUNT(PREREQ_ID)
+-------- ----------------
+EE-181                  1
+CS-319                  1
+
+13 rows selected.
+
+SQL> select * from instructor order by salary desc;
+
+ID    NAME                 DEPT_NAME                SALARY
+----- -------------------- -------------------- ----------
+22222 Einstein             Physics                   95000
+83821 Brandt               Comp. Sci.                92000
+12121 Wu                   Finance                   90000
+33456 Gold                 Physics                   87000
+98345 Kim                  Elec. Eng.                80000
+76543 Singh                Finance                   80000
+45565 Katz                 Comp. Sci.                75000
+76766 Crick                Biology                   72000
+10101 Srinivasan           Comp. Sci.                65000
+58583 Califieri            History                   62000
+32343 El Said              History                   60000
+
+ID    NAME                 DEPT_NAME                SALARY
+----- -------------------- -------------------- ----------
+15151 Mozart               Music                     40000
+
+12 rows selected.
+
+SQL> select max(sum(salary)) from department natural full outer join instructor group by dept_name;
+
+MAX(SUM(SALARY))
+----------------
+          232000
+
+SQL>  select dept_name, avg(salary) from department natural full outer join instructor group by dept_name having avg(salary) > 42000;
+
+DEPT_NAME            AVG(SALARY)
+-------------------- -----------
+Elec. Eng.                 80000
+Physics                    91000
+Comp. Sci.            77333.3333
+Finance                    85000
+Biology                    72000
+History                    61000
+
+6 rows selected.
+
+SQL> select course_id, sec_id, count(id) as enroll from takes t where semester='Spring' and year=2010 group by course_id, sec_id having count(id) = 2;
+
+COURSE_I SEC_ID       ENROLL
+-------- -------- ----------
+CS-315   1                 2
+CS-319   2                 2
+
+SQL> 11 not done yet !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+SQL> select dept_name, avg(salary) from instructor where dept_name in (select dept_name from department natural full outer join instructor group by dept_name having avg(salary) > 50000 and count(id) > 1) group by dept_name;
+
+DEPT_NAME            AVG(SALARY)
+-------------------- -----------
+Physics                    91000
+Comp. Sci.            77333.3333
+Finance                    85000
+History                    61000
+
+SQL> select dept_name from department where budget = (select max(budget) from department) group by dept_name;
+
+DEPT_NAME
+--------------------
+Finance
+
+SQL> select dept_name, sum(salary) from department natural full outer join instructor group by dept_name having sum(salary) > (select avg(sum(salary)) from department natural full outer join instructor group by dept_name);
+
+DEPT_NAME            SUM(SALARY)
+-------------------- -----------
+Physics                   182000
+Comp. Sci.                232000
+Finance                   170000
+
+SQL> savepoint sp;
+
+Savepoint created.
+
+SQL>  update student set dept_name='Comp. Sci.' where dept_name='Elec. Eng.';
+
+2 rows updated.
+
+SQL>  rollback;
+
+Rollback complete.
+
+SQL> savepoint sp;
+
+Savepoint created.
+
+SQL> update instructor set salary = case when salary > 80000 then salary*1.03 else salary*1.05 end;
+
+12 rows updated.
+
+SQL> rollback;
+
+Rollback complete.
