@@ -1,0 +1,46 @@
+1)
+select bdate, address from employee where fname='John' and minit='B' and lname='Smith';
+
+2)
+select fname, minit, lname, address from employee e, department d where e.dno=d.dnumber and dname='Research';
+or
+select fname, minit, lname, address from employee e inner join department d on e.dno=d.dnumber where dname='Research';
+
+3)
+select t.pnumber, t.dnum, e.lname, e.address, e.bdate from (select * from department d inner join project p on p.dnum=d.dnumber) t inner join employee e on t.mgr_ssn=e.ssn where t.plocation='Stafford';
+
+4)
+select e.fname as emp_fname, e.lname as emp_lname, sup.fname as super_fname, sup.lname as sup_lname from employee e inner join (select * from employee) sup on e.super_ssn=sup.ssn;
+
+5)
+select p.pno from (select * from works_on w inner join project p on w.pno=p.pnumber) p inner join employee e on p.essn=e.ssn where e.fname='Smith' or e.lname='Smith';
+
+6)
+select p.pnumber from (select * from works_on w inner join employee e on e.ssn=w.essn) e inner join project p on p.pnumber=e.pno, (select * from department dep inner join employee e on dep.mgr_ssn=e.ssn) d where d.dnumber=p.dnum and (e.fname='Smith' or e.lname='Smith' or d.fname='Smith' or d.lname='Smith');
+
+7)
+select d.dnumber, e.lname, e.fname from employee e, works_on w, project p, department d where e.ssn=w.essn and w.pno=p.pnumber and p.dnum=d.dnumber group by d.dnumber, e.lname, e.fname order by d.dnumber, e.lname, e.fname;
+or
+select d.dnumber, e.lname, e.fname from (select * from employee e inner join works_on w on e.ssn=w.essn) e inner join (select * from project p inner join department d on p.dnum=d.dnumber) d on e.pno=d.pnumber group by d.dnumber, e.lname, e.fname order by d.dnumber, e.lname, e.fname;
+
+8)
+select * from dependent d inner join employee e on d.essn=e.ssn where d.sex=e.sex;
+
+9)
+select fname, minit, lname from employee e where not exists (select * from dependent d where d.essn=e.ssn);
+
+10)
+select fname, minit, lname from (select * from employee e inner join department d on e.ssn=d.mgr_ssn) e where exists (select * from dependent d where d.essn=e.ssn);
+
+11)
+select avg(salary), max(salary), min(salary), sum(salary) from employee;
+
+12)
+select pnumber, pname, count(essn) as count_emp from project p left outer join works_on w on p.pnumber=w.pno group by pnumber, pname order by pnumber;
+
+13)
+select pnumber, pname, count(essn) as count_emp from project p left outer join works_on w on p.pnumber=w.pno group by pnumber, pname having count(essn)>2 order by pnumber;
+
+14)
+select dno, count(ssn) as emp_count from employee e where dno in (select dno from department d left outer join employee e on d.dnumber=e.dno group by dno having count(ssn)>3) and salary>40000 group by dno;
+

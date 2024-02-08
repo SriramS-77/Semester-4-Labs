@@ -1,0 +1,130 @@
+SQL> select bdate, address from employee where fname='John' and minit='B' and lname='Smith';
+
+BDATE     ADDRESS
+--------- ------------------------------
+09-JAN-65 731 Fondren, Houston, TX
+
+SQL> select fname, minit, lname, address from employee e inner join department d on e.dno=d.dnumber where dname='Research';
+
+FNAME           M LNAME           ADDRESS
+--------------- - --------------- ------------------------------
+John            B Smith           731 Fondren, Houston, TX
+Franklin        T Wong            638 Voss, Houston, TX
+Ramesh          K Narayan         975 Fire Oak, Humble, TX
+Joyce           A English         5631 Rice, Houston, TX
+
+SQL> select t.pnumber, t.dnum, e.lname, e.address, e.bdate from (select * from department d inner join project p on p.dnum=d.dnumber) t inner join employee e on t.mgr_ssn=e.ssn where t.plocation='Stafford';
+
+   PNUMBER       DNUM LNAME           ADDRESS                        BDATE
+---------- ---------- --------------- ------------------------------ ---------
+        10          4 Wallace         291 Berry, Bellaire, TX        20-JUN-41
+
+SQL> select e.fname as emp_fname, e.lname as emp_lname, sup.fname as super_fname, sup.lname as sup_lname from employee e inner join (select * from employee) sup on e.super_ssn=sup.ssn;
+
+EMP_FNAME       EMP_LNAME       SUPER_FNAME     SUP_LNAME
+--------------- --------------- --------------- ---------------
+Richard         Marini          Richard         Marini
+Joyce           English         Franklin        Wong
+Ramesh          Narayan         Franklin        Wong
+John            Smith           Franklin        Wong
+Ahmad           Jabbar          Jennifer        Wallace
+Alicia          Zelaya          Jennifer        Wallace
+Jennifer        Wallace         James           Borg
+Franklin        Wong            James           Borg
+
+8 rows selected.
+
+SQL> select p.pno from (select * from works_on w inner join project p on w.pno=p.pnumber) p inner join employee e on p.essn=e.ssn where e.fname='Smith' or e.lname='Smith';
+
+       PNO
+----------
+         1
+         2
+
+SQL> select p.pnumber from (select * from works_on w inner join employee e on e.ssn=w.essn) e inner join project p on p.pnumber=e.pno, (select * from department dep inner join employee e on dep.mgr_ssn=e.ssn) d where d.dnumber=p.dnum and (e.fname='Smith' or e.lname='Smith' or d.fname='Smith' or d.lname='Smith');
+
+   PNUMBER
+----------
+         1
+         2
+
+SQL> select d.dnumber, e.lname, e.fname from (select * from employee e inner join works_on w on e.ssn=w.essn) e inner join (select * from project p inner join department d on p.dnum=d.dnumber) d on e.pno=d.pnumber group by d.dnumber, e.lname, e.fname order by d.dnumber, e.lname, e.fname;
+
+   DNUMBER LNAME           FNAME
+---------- --------------- ---------------
+         1 Borg            James
+         1 Wallace         Jennifer
+         1 Wong            Franklin
+         4 Jabbar          Ahmad
+         4 Wallace         Jennifer
+         4 Wong            Franklin
+         4 Zelaya          Alicia
+         5 English         Joyce
+         5 Narayan         Ramesh
+         5 Smith           John
+         5 Wong            Franklin
+
+11 rows selected.
+
+SQL> select * from dependent d inner join employee e on d.essn=e.ssn where d.sex=e.sex;
+
+ESSN      DEPENDENT_NAME  S BDATE     RELATION FNAME           M LNAME           SSN       BDATE     ADDRESS                        S     SALARY SUPER_SSN        DNO
+--------- --------------- - --------- -------- --------------- - --------------- --------- --------- ------------------------------ - ---------- --------- ----------
+123456789 Michael         M 04-JAN-88 Son      John            B Smith           123456789 09-JAN-65 731 Fondren, Houston, TX       M      30000 333445555          5
+333445555 Theodore        M 25-OCT-83 Son      Franklin        T Wong            333445555 08-DEC-65 638 Voss, Houston, TX          M      40000 888665555          5
+
+SQL> select fname, minit, lname from employee e where not exists (select * from dependent d where d.essn=e.ssn);
+
+FNAME           M LNAME
+--------------- - ---------------
+Richard         K Marini
+Ahmad           V Jabbar
+Alicia          J Zelaya
+James           E Borg
+Joyce           A English
+Ramesh          K Narayan
+
+6 rows selected.
+
+SQL> select fname, minit, lname from (select * from employee e inner join department d on e.ssn=d.mgr_ssn) e where exists (select * from dependent d where d.essn=e.ssn);
+
+FNAME           M LNAME
+--------------- - ---------------
+Franklin        T Wong
+Jennifer        S Wallace
+
+SQL> select avg(salary), max(salary), min(salary), sum(salary) from employee;
+
+AVG(SALARY) MAX(SALARY) MIN(SALARY) SUM(SALARY)
+----------- ----------- ----------- -----------
+ 35333.3333       55000       25000      318000
+
+SQL> select pnumber, pname, count(essn) as count_emp from project p left outer join works_on w on p.pnumber=w.pno group by pnumber, pname order by pnumber;
+
+   PNUMBER PNAME            COUNT_EMP
+---------- --------------- ----------
+         1 ProductX                 2
+         2 ProductY                 3
+         3 ProductZ                 2
+        10 Computerization          3
+        20 Reorganization           3
+        30 Newbenefits              3
+
+6 rows selected.
+
+SQL> select pnumber, pname, count(essn) as count_emp from project p left outer join works_on w on p.pnumber=w.pno group by pnumber, pname having count(essn)>2 order by pnumber;
+
+   PNUMBER PNAME            COUNT_EMP
+---------- --------------- ----------
+         2 ProductY                 3
+        10 Computerization          3
+        20 Reorganization           3
+        30 Newbenefits              3
+
+SQL> select dno, count(ssn) as emp_count from employee e where dno in (select dno from department d left outer join employee e on d.dnumber=e.dno group by dno having count(ssn)>3) and salary>40000 group by dno;
+
+       DNO  EMP_COUNT
+---------- ----------
+         4          2
+
+SQL>
