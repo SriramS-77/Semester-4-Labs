@@ -1,0 +1,270 @@
+set serveroutput on
+declare
+bk_subject varchar(20);
+bk_count number;
+begin
+bk_subject := '&Subject';
+dbms_output.put_line('Input subject is '||bk_subject);
+select count(*) into bk_count
+from book
+where subject = bk_subject;
+dbms_output.put_line('Number of books: '||bk_count);
+end;
+/
+
+Exerises:
+
+create table student (rollno numeric(2), gpa numeric(3, 2));
+insert into student values(1, 5.8);
+insert into student values(2, 6.5);
+insert into student values(3, 3.4);
+insert into student values(4, 7.8);
+insert into student values(5, 9.5);
+
+1)
+SET SERVEROUTPUT ON
+SQL> declare
+  2  roll numeric(2);
+  3  gpa numeric(3,2);
+  4  begin
+  5  roll := '&RollNo';
+  6  dbms_output.put_line('Input Roll number is ' || roll);
+  7  select gpa into gpa
+  8  from student
+  9  where rollno = roll;
+ 10  dbms_output.put_line('GPA is ' || gpa);
+ 11  end;
+ 12  /
+Enter value for rollno: 2
+old   5: roll := '&RollNo';
+new   5: roll := '2';
+Input Roll numberis 2
+GPA is 6.5
+
+2)
+declare
+roll numeric(2);
+gpa numeric(3,2);
+grade char(2);
+begin
+roll := '&RollNo';
+dbms_output.put_line('Input Roll number is ' || roll);
+select gpa into gpa
+from student
+where rollno = roll;
+if gpa > 9 then grade := 'A+';
+elsif gpa > 8 then grade := 'A';
+elsif gpa > 7 then grade := 'B';
+elsif gpa > 6 then grade := 'C';
+elsif gpa > 5 then grade := 'D';
+elsif gpa > 4 then grade := 'E';
+else grade := 'F';
+end if;
+dbms_output.put_line('GPA is ' || gpa);
+dbms_output.put_line('Grade is ' || grade);
+end;
+/
+
+Enter value for rollno: 4
+old   6: roll := '&RollNo';
+new   6: roll := '4';
+Input Roll number is 4
+GPA is 7.8
+Grade is B
+
+3)
+declare
+late_days numeric(3);
+fine numeric(2);
+begin
+late_days := '&No_of_days_late';
+dbms_output.put_line('Number of days late is ' || late_days);
+if late_days < 7 then fine := 0;
+elsif late_days < 15 then fine := 1;
+elsif late_days < 30 then fine := 2;
+else fine := 5;
+end if;
+dbms_output.put_line('Fine is ' || fine || ' Rs');
+end;
+/
+
+Enter value for no_of_days_late: 11
+old   5: late_days := '&No_of_days_late';
+new   5: late_days := '11';
+Number of days late is 11
+Fine is 1 Rs
+
+4)
+declare
+id numeric(1) := 1;
+gpa numeric(3,2);
+grade char(2);
+begin
+loop
+if id > 5 then exit;
+end if;
+select gpa into gpa from student where rollno = id;
+if gpa > 9 then grade := 'A+';
+elsif gpa > 8 then grade := 'A';
+elsif gpa > 7 then grade := 'B';
+elsif gpa > 6 then grade := 'C';
+elsif gpa > 5 then grade := 'D';
+elsif gpa > 4 then grade := 'E';
+else grade := 'F';
+end if;
+dbms_output.put_line('Student with roll number ' || id || ' : GPA = ' || gpa || ' and Grade = ' || grade);
+id := id + 1;
+end loop;
+end;
+/
+
+Student with roll number 1 : GPA = 5.8 and Grade = D
+Student with roll number 2 : GPA = 6.5 and Grade = C
+Student with roll number 3 : GPA = 3.4 and Grade = F
+Student with roll number 4 : GPA = 7.8 and Grade = B
+Student with roll number 5 : GPA = 9.5 and Grade = A+
+
+PL/SQL procedure successfully completed.
+
+5)
+alter table student add (grade char(2));
+
+declare
+id numeric(1) := 1;
+gpa numeric(3,2);
+lgrade char(2);
+begin
+while id < 6
+loop
+select gpa into gpa from student where rollno = id;
+if gpa > 9 then lgrade := 'A+';
+elsif gpa > 8 then lgrade := 'A';
+elsif gpa > 7 then lgrade := 'B';
+elsif gpa > 6 then lgrade := 'C';
+elsif gpa > 5 then lgrade := 'D';
+elsif gpa > 4 then lgrade := 'E';
+else lgrade := 'F';
+end if;
+update student set grade = lgrade where rollno = id;
+id := id + 1;
+end loop;
+end;
+/
+
+PL/SQL procedure successfully completed.
+
+SQL> select * from student;
+
+    ROLLNO        GPA GR
+---------- ---------- --
+         1        5.8 D
+         2        6.5 C
+         3        3.4 F
+         4        7.8 B
+         5        9.5 A+
+
+6)
+declare
+max_gpa numeric(3,2) := 0;
+gpa numeric(3,2);
+roll numeric(1);
+begin
+for id in 1..5 loop
+select gpa into gpa from student where rollno = id;
+if gpa > max_gpa then max_gpa := gpa;
+end if;
+end loop;
+select rollno into roll from student where gpa = max_gpa;
+dbms_output.put_line('Student ' || roll || ' got the maximum GPA of ' || max_gpa);
+end;
+/
+
+7)
+declare
+id numeric(1) := 1;
+gpa numeric(3,2);
+grade char(2);
+begin
+<<in_loop>>
+select gpa into gpa from student where rollno = id;
+if gpa > 9 then grade := 'A+';
+elsif gpa > 8 then grade := 'A';
+elsif gpa > 7 then grade := 'B';
+elsif gpa > 6 then grade := 'C';
+elsif gpa > 5 then grade := 'D';
+elsif gpa > 4 then grade := 'E';
+else grade := 'F';
+end if;
+dbms_output.put_line('Student with roll number ' || id || ' : GPA = ' || gpa || ' and Grade = ' || grade);
+id := id + 1;
+if id < 6 then goto in_loop;
+end if;
+end;
+/
+
+Student with roll number 1 : GPA = 5.8 and Grade = D
+Student with roll number 2 : GPA = 6.5 and Grade = C
+Student with roll number 3 : GPA = 3.4 and Grade = F
+Student with roll number 4 : GPA = 7.8 and Grade = B
+Student with roll number 5 : GPA = 9.5 and Grade = A+
+
+PL/SQL procedure successfully completed.
+
+8)
+create table instructor
+	(ID			varchar(5), 
+	 name			varchar(20) not null, 
+	 dept_name		varchar(20), 
+	 salary	numeric(8,2) check (salary > 29000),
+	 primary key (ID)
+	);
+
+
+declare
+name varchar(20);
+id varchar(5);
+dept varchar(20);
+salary numeric(8,2);
+begin
+name := '&Name_of_instructor';
+select instructor.id, dept_name, instructor.salary into id, dept, salary from instructor where instructor.name = name;
+dbms_output.put_line('Details of the instructor :' || name);
+dbms_output.put_line('ID: ' || id);
+dbms_output.put_line('Department: ' || dept);
+dbms_output.put_line('Salary: ' || salary);
+exception
+when no_data_found then dbms_output.put_line('No rows found!');
+when too_many_rows then dbms_output.put_line('Multiple rows found!');
+end;
+/
+
+Enter value for name_of_instructor: Wu
+old   7: name := '&Name_of_instructor';
+new   7: name := 'Wu';
+Multiple rows found!
+
+PL/SQL procedure successfully completed.
+
+
+
+declare
+name varchar(20);
+id varchar(5);
+dept varchar(20);
+salary numeric(8,2);
+begin
+name := '&Name_of_instructor';
+select instructor.id into id from instructor where instructor.name = name;
+select dept_name into dept from instructor where instructor.name = name;
+select instructor.salary into salary from instructor where instructor.name = name;
+dbms_output.put_line('Details of the instructor :' || name);
+dbms_output.put_line('ID: ' || id);
+dbms_output.put_line('Department: ' || dept);
+dbms_output.put_line('Salary: ' || salary);
+end;
+/
+
+
+
+
+
