@@ -68,12 +68,15 @@ class Graph:
             for i in self.list[top.node]:
                 node, w = i[0], i[1]
                 if node not in visited:
-                    queue.append(Node(node, self.heuristic[node], w, top))
-                else:
+                    inserted = False
                     for j in queue:
                         if j.node == node and j.cost > top.cost + w:
+                            inserted = True
                             index = queue.index(j)
                             queue[index] = Node(node, self.heuristic[node], w, top)
+                            break
+                    if not inserted:
+                        queue.append(Node(node, self.heuristic[node], w, top))
 
                     
 def main():
