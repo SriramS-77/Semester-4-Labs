@@ -1,0 +1,19 @@
+1)
+Table created.
+
+Enter value for dept_name: Finance
+old   2: dept instructor.dept_name%TYPE := '&dept_name';
+new   2: dept instructor.dept_name%TYPE := 'Finance';
+12121
+76543
+
+PL/SQL procedure successfully completed.
+
+SQL> select * from salary_raise;
+
+INSTR RAISE_DAT  RAISE_AMT
+----- --------- ----------
+12121 29-FEB-24    4285.71
+76543 29-FEB-24    3809.52
+
+2)
