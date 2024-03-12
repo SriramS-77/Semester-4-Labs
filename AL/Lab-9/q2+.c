@@ -61,11 +61,9 @@ int main()
     printf("Enter the %d entries:\n", m);
     for(int i=0; i<m; i++){
         printf("\nEnter word: ");
-        // scanf(" %s", ele);
-        fflush(stdin);
-        fgets(ele, 20, stdin);
-        printf("hello\t");
-        k = value_of_word(ele) % n;
+        scanf(" %s", ele);
+        printf("hello->%s\t", ele);
+        k = (value_of_word(ele)) % n;
         temp = hash_table[k];
         if(!temp){
             hash_table[k] = createNode(ele);
