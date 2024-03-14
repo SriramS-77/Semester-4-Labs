@@ -17,3 +17,68 @@ INSTR RAISE_DAT  RAISE_AMT
 76543 29-FEB-24    3809.52
 
 2)
+ID = 70557, Name = Snow, Dept = Physics, Credits = 0
+ID = 12345, Name = Shankar, Dept = Comp. Sci., Credits = 32
+ID = 55739, Name = Sanchez, Dept = Music, Credits = 38
+ID = 45678, Name = Levy, Dept = Physics, Credits = 46
+ID = 54321, Name = Williams, Dept = Comp. Sci., Credits = 54
+ID = 44553, Name = Peltier, Dept = Physics, Credits = 56
+ID = 76543, Name = Brown, Dept = Comp. Sci., Credits = 58
+ID = 76653, Name = Aoi, Dept = Elec. Eng., Credits = 60
+ID = 19991, Name = Brandt, Dept = History, Credits = 80
+ID = 98765, Name = Bourikas, Dept = Elec. Eng., Credits = 98
+
+PL/SQL procedure successfully completed.
+
+3)
+CourseID = CS-101, SecID = 1, Dept = Comp. Sci., Title = Intro. to Computer
+Science, Semester = Fall, Year = 2009, Credits = 4, Building = Packard, TimeSlot
+= H, Name of Instructor = Srinivasan, Enroll Count = 7
+*******************************
+CourseID = CS-315, SecID = 1, Dept = Comp. Sci., Title = Robotics, Semester =
+Spring, Year = 2010, Credits = 3, Building = Watson, TimeSlot = D, Name of
+Instructor = Srinivasan, Enroll Count = 2
+*******************************
+CourseID = CS-347, SecID = 1, Dept = Comp. Sci., Title = Database System
+Concepts, Semester = Fall, Year = 2009, Credits = 3, Building = Taylor, TimeSlot
+= A, Name of Instructor = Srinivasan, Enroll Count = 2
+*******************************
+...
+
+PL/SQL procedure successfully completed.
+
+4)
+Deregistering Shankar from CS-101
+Deregistering Levy from CS-101
+Deregistering Levy from CS-101
+
+PL/SQL procedure successfully completed.
+
+5)
+PL/SQL procedure successfully completed.
+SQL>  select * from student_table;
+
+    ROLLNO        GPA GR
+---------- ---------- --
+         1        5.8 D
+         2        6.5 C
+         3        3.4 F
+         4        7.8 B
+         5        9.5 A+
+
+6)
+Enter value for course: CS-101
+old   2: course varchar(20) := '&course';
+new   2: course varchar(20) := 'CS-101';
+ID = 10101, Name = Srinivasan
+ID = 45565, Name = Katz
+
+PL/SQL procedure successfully completed.
+
+7)
+Student Aoi registered to a course taught by his advisor
+Student Shankar registered to a course taught by his advisor
+Student Peltier registered to a course taught by his advisor
+Student Tanaka registered to a course taught by his advisor
+
+PL/SQL procedure successfully completed.
