@@ -1,0 +1,78 @@
+1)
+set serveroutput on
+set linesize 100
+
+create or replace procedure print_message is
+begin
+dbms_output.put_line('Good Day to You!!!');
+end;
+/
+
+declare
+begin
+print_message;
+end;
+/
+
+Good Day to You!!!
+
+PL/SQL procedure successfully completed.
+
+2)
+
+create or replace procedure instr(dept in varchar) is
+cursor c1 is select * from instructor where dept_name=dept;
+cursor c2 is select * from course where dept_name=dept;
+begin
+dbms_output.put_line('Instructors in ' || dept || ' department:');
+for i in c1
+loop
+dbms_output.put_line(i.name);
+end loop;
+dbms_output.put_line('Courses offered by ' || dept || ' department:');
+for i in c2
+loop
+dbms_output.put_line(i.title);
+end loop;
+end;
+/
+
+
+begin
+instr('Finance');
+end;
+/
+
+
+declare
+dept varchar(20) := '&Department';
+begin
+instr(dept);
+end;
+/
+
+5)
+create or replace function square(num NUMBER)
+return NUMBER as
+sq number;
+begin
+sq := num * num;
+return sq;
+end;
+/
+
+declare num number;
+begin
+num := '&Number';
+dbms_output.put_line('Square of ' || num || ' is ' || square(num));
+end;
+/
+
+
+
+
+
+
+
+
+
