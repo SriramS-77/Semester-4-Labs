@@ -47,14 +47,17 @@ def path(start: tuple, max: tuple, goal: int):
         for node in generate_states(top, max):
             if node not in visited:
                 queue.append(Node(node, 1, top))
+    print('Goal state not possible!!!')
+    return False
                 
 def paths(start: tuple, max: tuple, goal: int):
     queue = [Node(start)]
     visited = []
     while(len(queue) != 0):
         top: Node = queue.pop(0)
+        print('Top: ', top.node)
         visited.append(top.node)
-        if top.node[0] == goal:
+        if top.node[0] == goal and top.node[1] == 0:
             print(f"\n\nGoal state ({goal}, X) reached from {list(start)}!!!")
             print(f"Cost = {top.cost}")
             print(f"Path = ", [list(i) for i in top.path])
@@ -62,9 +65,11 @@ def paths(start: tuple, max: tuple, goal: int):
         for node in generate_states(top, max):
             if node not in visited:
                 queue.append(Node(node, 1, top))
+    print('Goal state not possible!!!')
+    return False
                
 def main():
-    paths((0, 0), (4, 3), 2)
+    paths((0, 0), (7, 3), 8)
     
 if __name__ == "__main__":
     main()
