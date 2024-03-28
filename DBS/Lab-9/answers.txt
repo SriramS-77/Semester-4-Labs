@@ -20,16 +20,16 @@ PL/SQL procedure successfully completed.
 
 2)
 
-create or replace procedure instr(dept in varchar) is
-cursor c1 is select * from instructor where dept_name=dept;
-cursor c2 is select * from course where dept_name=dept;
+create or replace procedure instr(dept1 instructor.dept_name%type) is
+cursor c1 is select * from instructor where dept_name=dept1;
+cursor c2 is select * from course where dept_name=dept1;
 begin
-dbms_output.put_line('Instructors in ' || dept || ' department:');
+dbms_output.put_line('Instructors in ' || dept1 || ' department:');
 for i in c1
 loop
 dbms_output.put_line(i.name);
 end loop;
-dbms_output.put_line('Courses offered by ' || dept || ' department:');
+dbms_output.put_line('Courses offered by ' || dept1 || ' department:');
 for i in c2
 loop
 dbms_output.put_line(i.title);
@@ -39,15 +39,16 @@ end;
 
 
 begin
-instr('Finance');
+instr('h');
 end;
 /
 
 
 declare
-dept varchar(20) := '&Department';
+dept2 instructor.dept_name%type;
 begin
-instr(dept);
+dept2 := '&DEPARTMENT';
+instr(dept2);
 end;
 /
 
@@ -68,6 +69,19 @@ dbms_output.put_line('Square of ' || num || ' is ' || square(num));
 end;
 /
 
+
+8)
+create or replace function compute(principal in number, rate in number, years in number, si out number, ci out number, total in out number)
+return
+begin
+si = principal * rate * years / 100;
+ci = power((1 + rate / 100), years) * principal;
+total = ci + principal;
+end;
+/
+
+begin
+dbms_output.put_line
 
 
 
