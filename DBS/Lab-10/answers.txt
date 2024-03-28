@@ -1,1 +1,121 @@
+1)
+create table log_change_takes(time_of_change date, id takes.id%type, course_id takes.course_id%type, sec_id, takes.sec_id%type, semester takes.semester%type, year takes.year%type, grade takes.grade%type);
+
+create table log_change_takes(time_of_change date, id varchar(5), course_id varchar(8), sec_id varchar(8), semester varchar(6), year number(4), grade varchar(2));
+
+create or replace trigger takes_trigger
+before insert or update or delete on takes
+for each row
+declare
+cur_date date;
+begin 
+select current_date into cur_date from dual;
+case
+when inserting then insert into log_change_takes values(cur_date, :new.id, :new.course_id, :new.sec_id, :new.semester, :new.year, :new.grade);
+when updating then insert into log_change_takes values(cur_date, :old.id, :old.course_id, :old.sec_id, :old.semester, :old.year, :old.grade);
+when deleting then insert into log_change_takes values(cur_date, :old.id, :old.course_id, :old.sec_id, :old.semester, :old.year, :old.grade);
+end case;
+end;
+/
+
+>>>Trigger created.
+
+SQL> insert into takes values('98988', 'CS-101', '1', 'Fall', 2009, 'A+');
+
+1 row created.
+
+SQL> update takes set grade='C' where id='98988' and course_id='CS-101';
+
+1 row updated.
+
+SQL> delete from takes where id='98988' and course_id='CS-101';
+
+1 row deleted.
+
+SQL> select * from log_change_takes;
+
+TIME_OF_C ID    COURSE_I SEC_ID   SEMEST       YEAR GR
+--------- ----- -------- -------- ------ ---------- --
+28-MAR-24 98988 CS-101   1        Fall         2009 A+
+28-MAR-24 98988 CS-101   1        Fall         2009 A+
+28-MAR-24 98988 CS-101   1        Fall         2009 C   >>>
+
+
+
+2)
+create table old_data_instructor(id varchar(5), name varchar(50), dept_name varchar(20), salary numeric(8,2));
+
+create or replace trigger old_data_trigger
+before update of salary on instructor
+for each row
+declare
+begin
+insert into old_data_instructor values(:old.id, :old.name, :old.dept_name, :old.salary);
+end;
+/
+
+>>>
+Trigger created.
+
+SQL> update instructor set salary = 100000 where name = 'Kim';
+
+1 row updated.
+
+SQL> select * from old_data_instructor;
+
+ID    NAME                                               DEPT_NAME                SALARY
+----- -------------------------------------------------- -------------------- ----------
+98345 Kim                                                Elec. Eng.                80000
+>>>
+
+
+
+3)
+create or replace trigger t1
+on database
+before
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
