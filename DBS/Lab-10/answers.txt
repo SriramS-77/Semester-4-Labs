@@ -77,9 +77,18 @@ before
 
 
 
+5)
+create view advisor_view as (select * from (select ad.*, s.id as stu_id, s.name as stu_name, s.dept_name as stu_dept_name, s.tot_cred from student s inner join advisor ad on s.id=ad.s_id) a inner join instructor i on a.i_id=i.id);
 
+create or replace trigger adv_trigger
+instead of delete on advisor_view
+for each row
+begin
+delete from advisor where s_id=:old.s_id and i_id=:old.i_id;
+end;
+/
 
-
+>>> Trigger created.
 
 
 
