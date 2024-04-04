@@ -1,0 +1,11 @@
+1) intro - synopsis (intro to domain, and how database system is used in the domain)
+2) features implemented (from synopsis)
+3) methodology:
+3.1 er diagram, clear diagram conversion to schema
+3.2 show functional dependencies and normalize the tables ---> make design better
+3.3 PL/SQL procedures to fulfill some of the requirements via exceptions, cursors, triggers, etc.
+    Document cases where PL/SQL is used.
+
+4) Feautures, with the query and snapshot (if ui is there, snap ui)
+
+5)
